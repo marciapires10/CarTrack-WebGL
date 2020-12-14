@@ -21,6 +21,14 @@ var triangleVertexPositionBuffer = null;
 
 var triangleVertexColorBuffer = null;
 
+var cylinderVertexPositionBuffer = null;
+
+var cylinderVertexColorBuffer = null;
+
+var coneVertexPositionBuffer = null;
+
+var coneVertexColorBuffer = null;
+
 var globalAngleYY = 0.0;
 
 var globalTz = 0.0;
@@ -85,6 +93,195 @@ var primitiveType = null;
 
 var projectionType = 0;
 
+var vertices = [
+
+	// FRONT FACE
+	 
+	-0.25, -0.25,  0.25,
+	 
+	 0.25, -0.25,  0.25,
+	 
+	 0.25,  0.25,  0.25,
+
+	 
+	 0.25,  0.25,  0.25,
+	 
+	-0.25,  0.25,  0.25,
+	 
+	-0.25, -0.25,  0.25,
+	
+	// TOP FACE
+	
+	-0.25,  0.25,  0.25,
+	 
+	 0.25,  0.25,  0.25,
+	 
+	 0.25,  0.25, -0.25,
+
+	 
+	 0.25,  0.25, -0.25,
+	 
+	-0.25,  0.25, -0.25,
+	 
+	-0.25,  0.25,  0.25,
+	
+	// BOTTOM FACE 
+	
+	-0.25, -0.25, -0.25,
+	 
+	 0.25, -0.25, -0.25,
+	 
+	 0.25, -0.25,  0.25,
+
+	 
+	 0.25, -0.25,  0.25,
+	 
+	-0.25, -0.25,  0.25,
+	 
+	-0.25, -0.25, -0.25,
+	
+	// LEFT FACE 
+	
+	-0.25,  0.25,  0.25,
+	 
+	-0.25, -0.25, -0.25,
+
+	-0.25, -0.25,  0.25,
+	 
+	 
+	-0.25,  0.25,  0.25,
+	 
+	-0.25,  0.25, -0.25,
+	 
+	-0.25, -0.25, -0.25,
+	
+	// RIGHT FACE 
+	
+	 0.25,  0.25, -0.25,
+	 
+	 0.25, -0.25,  0.25,
+
+	 0.25, -0.25, -0.25,
+	 
+	 
+	 0.25,  0.25, -0.25,
+	 
+	 0.25,  0.25,  0.25,
+	 
+	 0.25, -0.25,  0.25,
+	
+	// BACK FACE 
+	
+	-0.25,  0.25, -0.25,
+	 
+	 0.25, -0.25, -0.25,
+
+	-0.25, -0.25, -0.25,
+	 
+	 
+	-0.25,  0.25, -0.25,
+	 
+	 0.25,  0.25, -0.25,
+	 
+	 0.25, -0.25, -0.25,			 
+];
+
+// And their colour
+
+var colors = [
+
+	 // FRONT FACE
+		 
+	 1.00,  0.00,  0.00,
+	 
+	 1.00,  0.00,  0.00,
+	 
+	 1.00,  0.00,  0.00,
+
+		 
+	 1.00,  1.00,  0.00,
+	 
+	 1.00,  1.00,  0.00,
+	 
+	 1.00,  1.00,  0.00,
+				  
+	 // TOP FACE
+		 
+	 0.00,  0.00,  0.00,
+	 
+	 0.00,  0.00,  0.00,
+	 
+	 0.00,  0.00,  0.00,
+
+		 
+	 0.50,  0.50,  0.50,
+	 
+	 0.50,  0.50,  0.50,
+	 
+	 0.50,  0.50,  0.50,
+				  
+	 // BOTTOM FACE
+		 
+	 0.00,  1.00,  0.00,
+	 
+	 0.00,  1.00,  0.00,
+	 
+	 0.00,  1.00,  0.00,
+
+		 
+	 0.00,  1.00,  1.00,
+	 
+	 0.00,  1.00,  1.00,
+	 
+	 0.00,  1.00,  1.00,
+				  
+	 // LEFT FACE
+		 
+	 0.00,  0.00,  1.00,
+	 
+	 0.00,  0.00,  1.00,
+	 
+	 0.00,  0.00,  1.00,
+
+		 
+	 1.00,  0.00,  1.00,
+	 
+	 1.00,  0.00,  1.00,
+	 
+	 1.00,  0.00,  1.00,
+				  
+	 // RIGHT FACE
+		 
+	 0.25,  0.50,  0.50,
+	 
+	 0.25,  0.50,  0.50,
+	 
+	 0.25,  0.50,  0.50,
+
+		 
+	 0.50,  0.25,  0.00,
+	 
+	 0.50,  0.25,  0.00,
+	 
+	 0.50,  0.25,  0.00,
+				  
+				  
+	 // BACK FACE
+		 
+	 0.25,  0.00,  0.75,
+	 
+	 0.25,  0.00,  0.75,
+	 
+	 0.25,  0.00,  0.75,
+
+		 
+	 0.50,  0.35,  0.35,
+	 
+	 0.50,  0.35,  0.35,
+	 
+	 0.50,  0.35,  0.35,			 			 
+];
+
 
 // ------------------------------------------------------------------------------
 // The WebGL code
@@ -97,33 +294,104 @@ var projectionType = 0;
 function initBuffers() {
 
     // Coordinates
-    triangleVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    triangleVertexPositionBuffer.itemSize = 3;
-    triangleVertexPositionBuffer.numItems = vertices.length / 3;
+		
+	triangleVertexPositionBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+	triangleVertexPositionBuffer.itemSize = 3;
+	triangleVertexPositionBuffer.numItems = vertices.length / 3;			
 
-    // Associating to the vertex shader
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
-                            triangleVertexPositionBuffer.itemSize,
-                            gl.FLOAT, false, 0, 0);
+	// Associating to the vertex shader
+	
+	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+			triangleVertexPositionBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);
+	
+	// Colors
+		
+	triangleVertexColorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+	triangleVertexColorBuffer.itemSize = 3;
+	triangleVertexColorBuffer.numItems = colors.length / 3;			
 
-    // Colors
-    triangleVertexColorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    triangleVertexColorBuffer.itemSize = 3;
-    triangleVertexColorBuffer.numItems = colors.length / 3;
-
-    // Associating to the vertex shader
+	// Associating to the vertex shader
+	
 	gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
-        triangleVertexColorBuffer.itemSize, 
-        gl.FLOAT, false, 0, 0);
+			triangleVertexColorBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);
+
+
+	//initBuffersCylinder();
+	//initBuffersCones();
+
+}
+
+function initBuffersCylinder(){
+	// Coordinates
+		
+	cylinderVertexPositionBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, cylinderVertexPositionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(newPoints), gl.STATIC_DRAW);
+	cylinderVertexPositionBuffer.itemSize = 3;
+	cylinderVertexPositionBuffer.numItems = newPoints.length / 3;			
+
+	// Associating to the vertex shader
+	
+	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+			cylinderVertexPositionBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);
+	
+	// Colors
+		
+	cylinderVertexColorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, cylinderVertexColorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(newColors), gl.STATIC_DRAW);
+	cylinderVertexColorBuffer.itemSize = 3;
+	cylinderVertexColorBuffer.numItems = newColors.length / 3;			
+
+	// Associating to the vertex shader
+	
+	gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
+			cylinderVertexColorBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);
+}
+
+function initBuffersCones(){
+	// Coordinates
+		
+	coneVertexPositionBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, coneVertexPositionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cone_vertices), gl.STATIC_DRAW);
+	coneVertexPositionBuffer.itemSize = 3;
+	coneVertexPositionBuffer.numItems = newPoints.length / 3;			
+
+	// Associating to the vertex shader
+	
+	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
+			cylinderVertexPositionBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);
+	
+	// Colors
+		
+	cylinderVertexColorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, cylinderVertexColorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(newColors), gl.STATIC_DRAW);
+	cylinderVertexColorBuffer.itemSize = 3;
+	cylinderVertexColorBuffer.numItems = newColors.length / 3;			
+
+	// Associating to the vertex shader
+	
+	gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
+			cylinderVertexColorBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);
 }
 
 // ---------------------------------------------------------------------------------
-// Drawing the model
-function drawModel(angleXX, angleYY, angleZZ, 
+
+// // Drawing the model
+function drawModel(modelVertexPosition, modelVertexColor,
+					angleXX, angleYY, angleZZ, 
                     sx, sy, sz,
                     tx, ty, tz,
                     mvMatrix,
@@ -153,16 +421,17 @@ function drawModel(angleXX, angleYY, angleZZ,
 		
 		var i;
 		
-		for( i = 0; i < triangleVertexPositionBuffer.numItems / 3; i++ ) {
+		for( i = 0; i < modelVertexPosition.numItems / 3; i++ ) {
 		
 			gl.drawArrays( primitiveType, 3 * i, 3 ); 
 		}
 	}	
 	else {
 				
-		gl.drawArrays(primitiveType, 0, triangleVertexPositionBuffer.numItems); 
-		
+		gl.drawArrays(primitiveType, 0, modelVertexPosition.numItems); 
+			
 	}	
+
 }
 
 function drawScene(){
@@ -170,7 +439,8 @@ function drawScene(){
     var mvMatrix = mat4();
 
     // Clearing the frame-buffer and the depth-buffer
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
 
     // Computing the Projection Matrix
 	
@@ -197,7 +467,7 @@ function drawScene(){
 		// Ensure that the model is "inside" the view volume
 		
 		pMatrix = perspective( 45, 1, 0.05, 15 );
-		
+		fColor;
 		// Global transformation !!
 		
 		globalTz = -2.5;
@@ -219,12 +489,26 @@ function drawScene(){
 	
 	// Instantianting the current model
 		
-	drawModel( angleXX, angleYY, angleZZ, 
+	drawModel( triangleVertexPositionBuffer, triangleVertexColorBuffer,
+			   angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
 	           tx, ty, tz,
 	           mvMatrix,
-	           primitiveType );
-    
+			   primitiveType );
+			   
+	drawModel( cylinderVertexPositionBuffer, cylinderVertexColorBuffer,
+				angleXX, angleYY, angleZZ, 
+				sx, sy, sz,
+				tx, ty, tz,
+				mvMatrix,
+				primitiveType );
+	
+	drawModel( coneVertexPositionBuffer, coneVertexColorBuffer,
+		angleXX, angleYY, angleZZ, 
+		sx, sy, sz,
+		tx, ty, tz,
+		mvMatrix,
+		primitiveType );
 }
 
 // Animation --- Updating transformation parameters
@@ -273,7 +557,7 @@ function tick(){
 
     requestAnimFrame(tick);
     drawScene();
-    animate();
+	animate();
 }
 
 // User interaction
@@ -286,20 +570,25 @@ function setEventListeners(){
 }
 
 
+
 // WebGL initialization
 
 function initWebGL(canvas){
     try{
+		
         // Create the WebGL context
         gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
-        primitiveType = gl.TRIANGLES;
+		primitiveType = gl.TRIANGLES;
+		
+		gl.enable(gl.CULL_FACE);
+
     } catch(e) {
     }
 
     if (!gl) {
         alert("Could not initialise WebGL, sorry! :-(");
-    }
+	}
 
 }
 
@@ -309,7 +598,9 @@ function runWebGL() {
 
     initWebGL(canvas);
 
-    shaderProgram = initShaders(gl);
+	shaderProgram = initShaders(gl);
+	
+	colorCylinder();
 
     setEventListeners();
 

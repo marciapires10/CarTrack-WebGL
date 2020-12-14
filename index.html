@@ -8,75 +8,30 @@
         <script id="shader-vs" type="x-shader/x-vertex">
 	
             attribute vec3 aVertexPosition;
-        
             attribute vec3 aVertexColor;
-            
+
             uniform mat4 uMVMatrix;
-        
             uniform mat4 uPMatrix;
-        
+
             varying vec4 vertexColor;
-            
-            void main(void) {
-                
-                // To allow seeing the points drawn
-                
+
+            void main(void){
                 gl_PointSize = 5.0;
-                
-                // Just converting the (x,y,z) vertices to Homogeneous Coord.
-                
-                // And multiplying by the Projection and the Model-View matrix
-                
+
                 gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-                
-                // Converting the RGB color value to RGBA
-                
+
                 vertexColor = vec4(aVertexColor, 1.0);
-
             }
-
-
-            attribute vec4 vPosition;
-            attribute vec3 vColor;
-            varying vec4 fColor;
-
-            uniform vec3 theta;
-
-            void main(){
-                vec3 angles = radians(theta);
-                vec3 c = cos(angles);
-                vec3 s = sin(angles);
-
-                mat4 rx = mat4(1.0, 0.0, 0.0, 0.0,
-                                0.0, c.x, s.x, 0.0,
-                                0.0, -s.x, c.x, 0.0,
-                                0.0, 0.0, 0.0, 1.0);
-
-                mat4 ry = mat4(c.y, 0.0, -s.y, 0.0,
-                                0.0, 1.0, 0.0, 0.0,
-                                s.y, 0.0, c.y, 0.0,
-                                0.0, 0.0, 0.0, 1.0);
-
-                mat4 rz = mat4(c.z, -s.z, 0.0, 0.0,
-                                s.z, c.z, 0.0, 0.0,
-                                0.0, 0.0, 1.0, 0.0,
-                                0.0, 0.0, 0.0, 1.0);
-
-                fColor = vColor;
-                gl_Position = rz * ry * rx * vPosition;
-            }
+            
         </script>
         
         <script id="shader-fs" type="x-shader/x-fragment">
         
             precision mediump float;
-            
+
             varying vec4 vertexColor;
-            
-            void main(void) {
-                
-                // Using the passed vertex color
-                
+
+            void main() {
                 gl_FragColor = vertexColor;
             }
         
