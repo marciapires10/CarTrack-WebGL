@@ -124,26 +124,26 @@ function initBuffers( model ) {
 	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array( model.colors), gl.STATIC_DRAW);
 	triangleVertexColorBuffer.itemSize = 3;
-	triangleVertexColorBuffer.numItems = model.colors.length / 3;	
+	triangleVertexColorBuffer.numItems = model.vertices.length / 3;	
 
-	// Association to vertex shader
-	gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
-		triangleVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0
-	);
+	// // Association to vertex shader
+	// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
+	// 	triangleVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0
+	// );
 
 	// Vertex Normal Vectors
 		
-	// triangleVertexNormalBuffer = gl.createBuffer();
-	// gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexNormalBuffer);
-	// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array( model.normals), gl.STATIC_DRAW);
-	// triangleVertexNormalBuffer.itemSize = 3;
-	// triangleVertexNormalBuffer.numItems = model.normals.length / 3;			
+	triangleVertexNormalBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexNormalBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array( model.normals), gl.STATIC_DRAW);
+	triangleVertexNormalBuffer.itemSize = 3;
+	triangleVertexNormalBuffer.numItems = model.normals.length / 3;			
 
-	// Associating to the vertex shader
+	//Associating to the vertex shader
 	
-	// gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
-	// 		triangleVertexNormalBuffer.itemSize, 
-	// 		gl.FLOAT, false, 0, 0);	
+	gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
+			triangleVertexNormalBuffer.itemSize, 
+			gl.FLOAT, false, 0, 0);	
 }
 
 //----------------------------------------------------------------------------
@@ -200,24 +200,24 @@ function drawModel( model,
 
     // // Light Sources
 	
-	// var numLights = lightSources.length;
+	var numLights = lightSources.length;
 	
-	// gl.uniform1i( gl.getUniformLocation(shaderProgram, "numLights"), 
-	// 	numLights );
+	gl.uniform1i( gl.getUniformLocation(shaderProgram, "numLights"), 
+		numLights );
 
 	// //Light Sources
 	
-	// for(var i = 0; i < lightSources.length; i++ )
-	// {
-	// 	gl.uniform1i( gl.getUniformLocation(shaderProgram, "allLights[" + String(i) + "].isOn"),
-	// 		lightSources[i].isOn );
+	for(var i = 0; i < lightSources.length; i++ )
+	{
+		gl.uniform1i( gl.getUniformLocation(shaderProgram, "allLights[" + String(i) + "].isOn"),
+			lightSources[i].isOn );
     
-	// 	gl.uniform4fv( gl.getUniformLocation(shaderProgram, "allLights[" + String(i) + "].position"),
-	// 		flatten(lightSources[i].getPosition()) );
+		gl.uniform4fv( gl.getUniformLocation(shaderProgram, "allLights[" + String(i) + "].position"),
+			flatten(lightSources[i].getPosition()) );
     
-	// 	gl.uniform3fv( gl.getUniformLocation(shaderProgram, "allLights[" + String(i) + "].intensities"),
-	// 		flatten(lightSources[i].getIntensity()) );
-    // }
+		gl.uniform3fv( gl.getUniformLocation(shaderProgram, "allLights[" + String(i) + "].intensities"),
+			flatten(lightSources[i].getIntensity()) );
+    }
         
 	// Drawing 
 	
@@ -239,9 +239,7 @@ function drawModel( model,
 		}
 	}	
 	else {
-				
-		gl.drawArrays(primitiveType, 0, triangleVertexPositionBuffer.numItems); 
-		
+		gl.drawArrays(primitiveType, 0, triangleVertexPositionBuffer.numItems); 		
 	}	
 }
 
@@ -325,36 +323,35 @@ function drawScene() {
 	
 	// FOR EACH LIGHT SOURCE
 	    
-	// for(var i = 0; i < lightSources.length; i++ )
-	// {
-	// 	// Animating the light source, if defined
+	for(var i = 0; i < lightSources.length; i++ )
+	{
+		// Animating the light source, if defined
 		    
-	// 	var lightSourceMatrix = mat4();
+		var lightSourceMatrix = mat4();
 
-	// 	if( !lightSources[i].isOff() ) {
+		if( !lightSources[i].isOff() ) {
 				
-	// 		// COMPLETE THE CODE FOR THE OTHER ROTATION AXES
+			// COMPLETE THE CODE FOR THE OTHER ROTATION AXES
 
-	// 		if( lightSources[i].isRotYYOn() ) 
-	// 		{
-	// 			lightSourceMatrix = mult( 
-	// 					lightSourceMatrix, 
-	// 					rotationYYMatrix( lightSources[i].getRotAngleYY() ) );
-	// 		}
-	// 	}
+			if( lightSources[i].isRotYYOn() ) 
+			{
+				lightSourceMatrix = mult( 
+						lightSourceMatrix, 
+						rotationYYMatrix( lightSources[i].getRotAngleYY() ) );
+			}
+		}
 		
 	// 	// NEW Passing the Light Souree Matrix to apply
 	
-	// 	var lsmUniform = gl.getUniformLocation(shaderProgram, "allLights["+ String(i) + "].lightSourceMatrix");
+		var lsmUniform = gl.getUniformLocation(shaderProgram, "allLights["+ String(i) + "].lightSourceMatrix");
 	
-	// 	gl.uniformMatrix4fv(lsmUniform, false, new Float32Array(flatten(lightSourceMatrix)));
-	// }
+		gl.uniformMatrix4fv(lsmUniform, false, new Float32Array(flatten(lightSourceMatrix)));
+	}
 			
 	// Instantianting all scene models
 	
 	for(var i = 0; i < sceneModels.length; i++ )
 	{ 
-		console.log(sceneModels[i].name)
 		drawModel( sceneModels[i],
 			   mvMatrix,
 	           primitiveType );
@@ -411,15 +408,15 @@ function animate() {
 		
 		// Rotating the light sources
 	
-		// for(var i = 0; i < lightSources.length; i++ )
-	    // {
-		// 	if( lightSources[i].isRotYYOn() ) {
+		for(var i = 0; i < lightSources.length; i++ )
+	    {
+			if( lightSources[i].isRotYYOn() ) {
 
-		// 		var angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
+				var angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
 		
-		// 		lightSources[i].setRotAngleYY( angle );
-		// 	}
-		// }
+				lightSources[i].setRotAngleYY( angle );
+			}
+		}
 }
 	
 	lastTime = timeNow;
@@ -681,7 +678,7 @@ function init_models()
 
 function initWebGL( canvas ) {
 	try {
-		init_models();
+		
 		// Create the WebGL context
 		
 		// Some browsers still need "experimental-webgl"
@@ -723,6 +720,8 @@ function initWebGL( canvas ) {
 
 function runWebGL() {
 	
+	init_models();
+
 	var canvas = document.getElementById("my-canvas");
 	
 	initWebGL( canvas );

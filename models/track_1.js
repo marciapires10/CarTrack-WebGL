@@ -72,7 +72,7 @@ function track_1Model( ) {
         0.5, 1, 0.6,
         0.5, 1, 0.6,
     ];
-	//computeVertexNormals( cube.vertices, cube.normals );
+	computeVertexNormals( track_1.vertices, track_1.normals );
 
 	return track_1;
 }

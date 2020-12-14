@@ -26,9 +26,9 @@ function emptyModelFeatures() {
 
 	// Displacement vector
 	
-	this.tx = 0.5;
+	this.tx = 0.0;
 	
-	this.ty = 0.5;
+	this.ty = 0.0;
 	
 	this.tz = 0.0;	
 	
@@ -42,11 +42,11 @@ function emptyModelFeatures() {
 
 	// Scaling factors
 	
-	this.sx = 0.25;
+	this.sx = 0.1;
 	
-	this.sy = 0.25;
+	this.sy = 0.1;
 	
-	this.sz = 0.25;		
+	this.sz = 0.1;		
 	
 	// Animation controls
 	

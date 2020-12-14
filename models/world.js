@@ -115,7 +115,7 @@ function worldModel( ) {
         0, 0.7, 0.4,
         0, 0.7, 0.4,
     ];
-	//computeVertexNormals( cube.vertices, cube.normals );
+	computeVertexNormals( world.vertices, world.normals );
 
 	return world;
 }

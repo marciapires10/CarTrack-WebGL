@@ -440,7 +440,7 @@ function carModel( ) {
         0, 0, 0.2,
         0, 0, 0.2,
     ];
-	//computeVertexNormals( cube.vertices, cube.normals );
+	computeVertexNormals( car.vertices, car.normals );
 
 	return car;
 }
