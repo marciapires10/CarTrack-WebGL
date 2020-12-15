@@ -752,6 +752,24 @@ function outputInfos(){
 //----------------------------------------------------------------------------
 
 function setEventListeners(){
+
+	document.addEventListener("keydown", function(event){
+		var key = event.keyCode;
+
+
+		for(var i = 0; i < sceneModels.length; i++ )
+	    {
+			switch(key){
+				case 39 :
+					sceneModels[i].rotAngleXX += 10;
+				break;
+	
+				case 37 :
+					sceneModels[i].rotAngleXX -= 10;
+				break;
+			}	
+		}
+	});
 	
     // Dropdown list
 	
@@ -795,6 +813,30 @@ function setEventListeners(){
 				break;
 		}
 	});      
+
+
+	// Dropdown list
+	
+	var list = document.getElementById("tracks");
+	
+	list.addEventListener("click", function(){
+				
+		// Getting the selection
+		
+		var mode = list.selectedIndex;
+				
+		switch(mode){
+			
+			case 0 : sceneModels[2] = new track_1Model();
+				break;
+			
+			case 1 : sceneModels[2] = new track_2Model();
+				break;
+			
+			case 2 : sceneModels[2] = new track_3Model();
+				break;
+		}
+	});     
 
 	// Button events
 	

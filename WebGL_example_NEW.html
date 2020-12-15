@@ -100,6 +100,9 @@ The fragment shader is the same simple one.
 <script type="text/javascript" src="models/car.js"></script>
 <script type="text/javascript" src="models/world.js"></script>
 <script type="text/javascript" src="models/track_1.js"></script>
+<script type="text/javascript" src="models/track_2.js"></script>
+<script type="text/javascript" src="models/track_3.js"></script>
+<script type="text/javascript" src="models/cylinder.js"></script>
 <!-- WebGL code -->
 
 <script type="text/javascript" src="utils/initShaders.js"></script>
@@ -171,7 +174,16 @@ The fragment shader is the same simple one.
 			<option value="0">Filled Triangles</option>
 			<option value="1">Wireframe</option>
 			<option value="2">Vertices</option>
-        </select>
+		</select>
+		
+		<p>Choose the <b>track</b>:
+		
+			<select id="tracks">
+				<option value="0">Track 1</option>
+				<option value="1">Track 2</option>
+				<option value="2">Track 3</option>
+			</select>
+		</p>
         				
 	</div>
 
