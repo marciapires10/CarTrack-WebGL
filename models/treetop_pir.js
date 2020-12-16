@@ -25,7 +25,6 @@ function treetop_pirModel( ) {
 
     ];
 
-    console.log("treetop_pir");
 
     treetop_pir.colors = [
         0.2, 0.4, 0.1, 
@@ -63,7 +62,6 @@ function treetop_pirModel( ) {
         0.2, 0.4, 0.1, 
     ];
 
-    console.log(treetop_pir.colors);
 
 	computeVertexNormals( treetop_pir.vertices, treetop_pir.normals );
 

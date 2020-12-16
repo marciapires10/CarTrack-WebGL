@@ -1,9 +1,9 @@
-function track_1Model( ) {
+function track_4Model( ) {
 	
-	var track_1 = new emptyModelFeatures();
+	var track_4 = new emptyModelFeatures();
     
-    track_1.name = "TRACK";
-	track_1.vertices = [
+    track_4.name = "TRACK";
+	track_4.vertices = [
         // TOP FACE
         -5,  0.26, 2,
 		-5,  0.26, 5,
@@ -89,7 +89,7 @@ function track_1Model( ) {
     ];
     
 
-    track_1.colors = [
+    track_4.colors = [
         //ROAD
         1, 1, 0.3,
         1, 1, 0.3,
@@ -171,8 +171,8 @@ function track_1Model( ) {
         0.6, 0.6, 0.7,
         0.6, 0.6, 0.7,
     ];
-    track_1.start_colors = track_1.colors;
-	computeVertexNormals( track_1.vertices, track_1.normals );
+    track_4.start_colors = track_4.colors;
+	computeVertexNormals( track_4.vertices, track_4.normals );
 
-	return track_1;
+	return track_4;
 }

@@ -17,11 +17,7 @@
 //
 
 var light = 0;
-
 var car_starting_pos = [0.45, 0.0, 0.45];
-
-var current_road;
-
 var sceneModels = [];
 
 var gl = null; // WebGL context
@@ -703,7 +699,6 @@ function setEventListeners(){
 	
 	show_car.addEventListener("click", function(){
 		show_car.checked = true;
-		console.log(show_car.checked);
 	});
 
 
@@ -814,7 +809,7 @@ function setEventListeners(){
 			
 			case 0 :
 			{	
-				current_road.reset_road();
+				current_road.reset_road(true);
 				sceneModels[2] = new track_1Model();
 				current_road = roads[0];
 				reset_car();
@@ -823,7 +818,7 @@ function setEventListeners(){
 			} 
 			case 1 : 
 			{
-				current_road.reset_road();
+				current_road.reset_road(true);
 				sceneModels[2] = new track_2Model();
 				current_road = roads[1];
 				reset_car();
@@ -833,12 +828,22 @@ function setEventListeners(){
 			
 			case 2 :
 			{
-				current_road.reset_road();
+				current_road.reset_road(true);
 				sceneModels[2] = new track_3Model();
 				current_road = roads[2];
 				reset_car();
 				break;
 			}
+			case 3 :
+			{
+				console.log("4");
+				current_road.reset_road(true);
+				sceneModels[2] = new track_4Model();
+				current_road = roads[3];
+				reset_car();
+				break;
+			}
+			
 		}
 	});     
 
