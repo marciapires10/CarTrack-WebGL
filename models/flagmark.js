@@ -147,8 +147,6 @@ function flagmarkModel( ) {
 
     ];
 
-    console.log("flagmark");
-
     flagmark.colors = [
         0, 0, 0, 
         0, 0, 0,  
@@ -405,8 +403,6 @@ function flagmarkModel( ) {
         0, 0, 0,  
         0, 0, 0,
     ];
-
-    console.log(flagmark.colors);
 
 	computeVertexNormals( flagmark.vertices, flagmark.normals );
 

@@ -1,7 +1,7 @@
 var roads = [];
 var current_lap = 0;
 var current_road;
-var has_lap_limit = true;
+var has_lap_limit = false;
 var lap_limit = 4;
 
 class Road{
@@ -71,6 +71,11 @@ function updateLap()
             reset_car();
         }
     }
+}
+
+function defineLap(laps){
+    lap_limit = laps;
+    has_lap_limit = true;
 }
 
 function initializeRoads()

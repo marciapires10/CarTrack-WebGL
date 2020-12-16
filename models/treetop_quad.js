@@ -56,8 +56,6 @@ function treetop_quadModel( ) {
 
     ];
 
-    console.log("treetop_quad");
-
     treetop_quad.colors = [
         0.2, 0.4, 0.1, 
         0.2, 0.4, 0.1,  
@@ -157,8 +155,6 @@ function treetop_quadModel( ) {
         0.2, 0.4, 0.1, 
         0.2, 0.4, 0.1,
     ];
-
-    console.log(treetop_quad.vertices);
 
 	computeVertexNormals( treetop_quad.vertices, treetop_quad.normals );
 

@@ -1,20 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////
+// Adapted from J. Madeira - November 2017 + November 2018
 //
-//  WebGL_example_24_GPU_per_vertex.js 
-//
-//  Phong Illumination Model on the GPU - Per vertex shading - Several light sources
-//
-//  Reference: E. Angel examples
-//
-//  J. Madeira - November 2017 + November 2018
-//
+// 
 //////////////////////////////////////////////////////////////////////////////
-
 
 //----------------------------------------------------------------------------
 //
 // Global Variables
 //
+
+var scenes = "WORLD";
 
 var light = 0;
 var car_starting_pos = [0.45, 0.0, 0.45];
@@ -675,7 +670,10 @@ function animate() {
 function tick() {
 	
 	requestAnimFrame(tick);
-	moveCar(current_road);
+	if(scenes == "WORLD")
+	{
+		moveCar(current_road);
+	}
 	drawScene();
 	animate();
 }
@@ -690,51 +688,161 @@ function outputInfos(){
 }
 
 //----------------------------------------------------------------------------
+function updateSpeed(){
+	document.getElementById("speed_value").innerHTML = car_speed;
+}
+
+
+function resetTrack(){
+	track = document.getElementById("tracks");
+	track.selectedIndex = 0;
+	current_road = roads[0];
+}
+
+function resetAll(){
+	globalAngleXX = 45;
+	globalAngleYY = 45;
+	globalAngleZZ = 30;
+	scenes = "WORLD";
+	init_models();
+	reset_car();
+	updateSpeed();
+	resetTrack();
+}
 
 function setEventListeners(){
 
 	var show_world = document.getElementById("show_world");
 	var show_car = document.getElementById("show_car");
-	var def_speed = 1;
+	var div_world = document.getElementById("div_world");
+	var div_car = document.getElementById("div_car");
+	updateSpeed();
+	div_car.style.visibility = 'hidden';
+	div_car.style.height = '0px';
 	
 	show_car.addEventListener("click", function(){
-		show_car.checked = true;
+		scenes = "CAR";
+		init_models();
+
+		div_world.style.visibility = 'hidden';
+		div_car.style.visibility = 'visible';
+
+	});
+
+
+	show_world.addEventListener("click", function(){
+		resetAll();
+
+		div_world.style.visibility = 'visible';
+		div_car.style.visibility = 'hidden';
+		div_car.style.height = '0px';
+
+	});
+
+	var blue = document.getElementById("blue");
+	var green = document.getElementById("green");
+	var yellow = document.getElementById("yellow");
+	var red = document.getElementById("red");
+
+	blue.addEventListener("click", function(){
+		for(var v=0; v < 180; v += 3){
+			if(v >= 108 && v < 126){
+				continue;
+			}
+			car_colors[v] = 0;
+			car_colors[v+1] = 0;
+			car_colors[v+2] = 1;
+		}
+		
+	});
+
+	green.addEventListener("click", function(){
+		for(var v=0; v < 180; v += 3){
+			if(v >= 108 && v < 126){
+				continue;
+			}
+			car_colors[v] = 0;
+			car_colors[v+1] = 1;
+			car_colors[v+2] = 0;
+		}
+		
+	});
+
+	yellow.addEventListener("click", function(){
+		for(var v=0; v < 180; v += 3){
+			if(v >= 108 && v < 126){
+				continue;
+			}
+			car_colors[v] = 1;
+			car_colors[v+1] = 1;
+			car_colors[v+2] = 0;
+		}
+		
+	});
+
+	red.addEventListener("click", function(){
+		for(var v=0; v < 180; v += 3){
+			if(v >= 108 && v < 126){
+				continue;
+			}
+			car_colors[v] = 0.6;
+			car_colors[v+1] = 0;
+			car_colors[v+2] = 0.1;
+		}
+		
 	});
 
 
 	var reset_race = document.getElementById("reset_race");
 	reset_race.addEventListener("click", function(){
 		reset_car();
-		document.getElementById("speed_value").innerHTML = def_speed;
+		updateSpeed();
 	});
 
 	var start_car = document.getElementById("start_car");
 	start_car.addEventListener("click", function(){
 		start_race();
-		document.getElementById("speed_value").innerHTML = def_speed;
+		updateSpeed();
 	});
 
 	var pause_car = document.getElementById("pause_car");
 	pause_car.addEventListener("click", function(){
 		pause_race();
+		updateSpeed();
 	});
 
 	var cont_car = document.getElementById("cont_car");
 	cont_car.addEventListener("click", function(){
 		cont_race();
+		updateSpeed();
 	});
 
-	document.getElementById("speed_value").innerHTML = def_speed;
-	var speed_value = document.getElementById("speed_value");
 	var speed_dec = document.getElementById("decrease_speed");
 	var speed_inc = document.getElementById("increase_speed");
 
 	speed_dec.addEventListener("click", function(){
-		speed_value.innerHTML = decrease_car_speed();
+		decrease_car_speed();
+		updateSpeed();
 	});
 
 	speed_inc.addEventListener("click", function(){
-		speed_value.innerHTML = increase_car_speed();
+		increase_car_speed();
+		updateSpeed();
+	});
+
+	var laps = document.getElementById("n_lap");
+	
+	
+	var r_laps = document.getElementById("send_lap");
+
+	r_laps.addEventListener("click", function(){
+		if(laps.value == "" || laps.value < 1){
+			alert("You have to define a valid number of laps");
+		} 
+		else{
+			defineLap(laps.value);
+			start_race();
+		}
 	});
 
 
@@ -747,6 +855,30 @@ function setEventListeners(){
 
 			case 37 :
 				globalAngleXX -= 10;
+			break;
+
+			case 38 :
+				globalAngleZZ += 10;
+			break;
+
+			case 40 :
+				globalAngleZZ -= 10;
+			break;
+
+			case 81 :
+				globalAngleYY += 10;
+			break;
+
+			case 65 :
+				globalAngleYY -= 10;
+			break;
+
+			case 68 :
+				setDay();
+			break;
+
+			case 78 :
+				setNight();
 			break;
 		}	
 	});
@@ -813,7 +945,7 @@ function setEventListeners(){
 				sceneModels[2] = new track_1Model();
 				current_road = roads[0];
 				reset_car();
-				setDay();
+				//setDay();
 				break;
 			} 
 			case 1 : 
@@ -822,7 +954,7 @@ function setEventListeners(){
 				sceneModels[2] = new track_2Model();
 				current_road = roads[1];
 				reset_car();
-				setNight();
+				//setNight();
 				break;
 			}
 			
@@ -836,7 +968,6 @@ function setEventListeners(){
 			}
 			case 3 :
 			{
-				console.log("4");
 				current_road.reset_road(true);
 				sceneModels[2] = new track_4Model();
 				current_road = roads[3];
@@ -847,175 +978,13 @@ function setEventListeners(){
 		}
 	});     
 
-	// Button events
-	
-	document.getElementById("XX-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotXXOn ) {
+	reset_all = document.getElementById("reset_all");
 
-				sceneModels[i].rotXXOn = false;
-			}
-			else {
-				sceneModels[i].rotXXOn = true;
-			}	
-		}
-	};
+	reset_all.addEventListener("click", function(){
+		resetAll();
 
-	document.getElementById("XX-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotXXDir == 1 ) {
+	});
 
-				sceneModels[i].rotXXDir = -1;
-			}
-			else {
-				sceneModels[i].rotXXDir = 1;
-			}	
-		}
-	};      
-
-	document.getElementById("XX-slower-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotXXSpeed *= 0.75; 
-		}
-	};      
-
-	document.getElementById("XX-faster-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotXXSpeed *= 1.25; 
-		}
-	};      
-
-	document.getElementById("YY-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotYYOn ) {
-
-				sceneModels[i].rotYYOn = false;
-			}
-			else {
-				sceneModels[i].rotYYOn = true;
-			}	
-		}
-	};
-
-	document.getElementById("YY-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotYYDir == 1 ) {
-
-				sceneModels[i].rotYYDir = -1;
-			}
-			else {
-				sceneModels[i].rotYYDir = 1;
-			}	
-		}
-	};      
-
-	document.getElementById("YY-slower-button").onclick = function(){
-
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotYYSpeed *= 0.75; 
-		}
-	};      
-
-	document.getElementById("YY-faster-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotYYSpeed *= 1.25; 
-		}
-	};      
-
-	document.getElementById("ZZ-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotZZOn ) {
-
-				sceneModels[i].rotZZOn = false;
-			}
-			else {
-				sceneModels[i].rotZZOn = true;
-			}	
-		}
-	};
-
-	document.getElementById("ZZ-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotZZDir == 1 ) {
-
-				sceneModels[i].rotZZDir = -1;
-			}
-			else {
-				sceneModels[i].rotZZDir = 1;
-			}	
-		}
-	};      
-
-	document.getElementById("ZZ-slower-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotZZSpeed *= 0.75; 
-		}
-	};      
-
-	document.getElementById("ZZ-faster-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotZZSpeed *= 1.25; 
-		}
-	};      
 }
 
 //----------------------------------------------------------------------------
@@ -1025,49 +994,70 @@ function setEventListeners(){
 
 function init_models()
 {
-	sceneModels.push( new worldModel() );
-	sceneModels.push( new carModel() );
-	sceneModels[1].tx = car_starting_pos[0];
-	sceneModels[1].ty = car_starting_pos[1];
-	sceneModels[1].tz = car_starting_pos[2];
-	sceneModels.push( new track_1Model() );
-	// Piramid tree
-	sceneModels.push( new cylinderModel());
-	sceneModels[3].tx = 0.2;
-	sceneModels[3].ty = 0.1;
-	sceneModels[3].tz = -0.2;
-	sceneModels.push( new treetop_pirModel());
-	sceneModels[4].tx = 0.2;
-	sceneModels[4].ty = 0.22;
-	sceneModels[4].tz = -0.2;
+	while(sceneModels.length > 0){
+		sceneModels.pop();
+	}
 
-	// Quad tree
-	sceneModels.push( new cylinderModel());
-	sceneModels[5].tx = -0.3;
-	sceneModels[5].ty = 0.05;
-	sceneModels[5].tz = 0.3;
-	sceneModels[5].sx = 0.05;
-	sceneModels[5].sy = 0.05;
-	sceneModels[5].sz = 0.05;
-	sceneModels.push( new treetop_quadModel() );
-	sceneModels[6].tx = -0.3;
-	sceneModels[6].ty = 0.075;
-	sceneModels[6].tz = 0.3;
-	sceneModels[6].sx = 0.05;
-	sceneModels[6].sy = 0.05;
-	sceneModels[6].sz = 0.05;
+	if(scenes == "WORLD"){
+		
+		sceneModels.push( new worldModel() );
+		sceneModels.push( new carModel() );
+		sceneModels[1].colors = car_colors;
+		sceneModels[1].start_colors = car_colors;
+		sceneModels[1].tx = car_starting_pos[0];
+		sceneModels[1].ty = car_starting_pos[1];
+		sceneModels[1].tz = car_starting_pos[2];
+		sceneModels.push( new track_1Model() );
+		// Piramid tree
+		sceneModels.push( new cylinderModel());
+		sceneModels[3].tx = 0.3;
+		sceneModels[3].ty = 0.1;
+		sceneModels[3].tz = -0.2;
+		sceneModels.push( new treetop_pirModel());
+		sceneModels[4].tx = 0.3;
+		sceneModels[4].ty = 0.22;
+		sceneModels[4].tz = -0.2;
 
-	// Mini Quad Tree
-	sceneModels.push( new cylinderModel());
-	sceneModels[7].tx = -0.55;
-	sceneModels[7].ty = 0.07;
-	sceneModels[7].tz = -0.55;
-	sceneModels.push( new treetop_quadModel() );
-	sceneModels[8].tx = -0.55;
-	sceneModels[8].ty = 0.10;
-	sceneModels[8].tz = -0.55;
+		// Quad tree
+		sceneModels.push( new cylinderModel());
+		sceneModels[5].tx = -0.3;
+		sceneModels[5].ty = 0.05;
+		sceneModels[5].tz = 0.35;
+		sceneModels[5].sx = 0.05;
+		sceneModels[5].sy = 0.05;
+		sceneModels[5].sz = 0.05;
+		sceneModels.push( new treetop_quadModel() );
+		sceneModels[6].tx = -0.3;
+		sceneModels[6].ty = 0.075;
+		sceneModels[6].tz = 0.35;
+		sceneModels[6].sx = 0.05;
+		sceneModels[6].sy = 0.05;
+		sceneModels[6].sz = 0.05;
 
-	sceneModels.push( new flagmarkModel() );
+		// Mini Quad Tree
+		sceneModels.push( new cylinderModel());
+		sceneModels[7].tx = -0.55;
+		sceneModels[7].ty = 0.07;
+		sceneModels[7].tz = -0.55;
+		sceneModels.push( new treetop_quadModel() );
+		sceneModels[8].tx = -0.55;
+		sceneModels[8].ty = 0.10;
+		sceneModels[8].tz = -0.55;
+
+		sceneModels.push( new flagmarkModel() );
+	}
+	else {
+		sceneModels.push( new carModel() );
+		sceneModels[0].colors = car_colors;
+		sceneModels[0].start_colors = car_colors;
+		sceneModels[0].tx = -0.2;
+		sceneModels[0].ty = -0.5;
+		sceneModels[0].tz = 0.0;
+		sceneModels[0].sx = 1.5;
+		sceneModels[0].sy = 1.5;
+		sceneModels[0].sz = 1.5;
+		sceneModels[0].rotAngleYY += 180;
+	}
 }
 
 function initWebGL( canvas ) {
