@@ -34,11 +34,11 @@ function emptyModelFeatures() {
 	
 	// Rotation angles	
 	
-	this.rotAngleXX = 45;
+	this.rotAngleXX = 0;
 	
-	this.rotAngleYY = 45;
+	this.rotAngleYY = 0;
 	
-	this.rotAngleZZ = 30;	
+	this.rotAngleZZ = 0;	
 
 	// Scaling factors
 	

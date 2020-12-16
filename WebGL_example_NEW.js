@@ -15,19 +15,9 @@
 //
 // Global Variables
 //
+var car_starting_pos = [0.45, 0.0, 0.45];
 
-// var road = [
-// 	[4.5, -4.5],
-// 	[-4.5, -4.5],
-// 	[-4.5, 4.5],
-// 	[4.5, 4.5],
-// ];
-
-var car_middle_point = [0.0, 0.0, 0.0];
-
-var direction = "Front"; 
-
-var car_speed = 0.5;
+var current_road;
 
 var sceneModels = [];
 
@@ -43,7 +33,11 @@ var triangleVertexColorBuffer = null;
 
 // The GLOBAL transformation parameters
 
-var globalAngleYY = 0.0;
+var globalAngleYY = 45;
+
+var globalAngleXX = 45;
+
+var globalAngleZZ = 30;
 
 var globalTz = 0.0;
 
@@ -54,6 +48,14 @@ var globalRotationYY_ON = 0;
 var globalRotationYY_DIR = 1;
 
 var globalRotationYY_SPEED = 1;
+
+var globalRotationXX_DIR = 1;
+
+var globalRotationXX_SPEED = 1;
+
+var globalRotationZZ_DIR = 1;
+
+var globalRotationZZ_SPEED = 1;
 
 // To allow choosing the way of drawing the model triangles
 
@@ -159,9 +161,17 @@ function drawModel( model,
 	
 	// Concatenate with the particular model transformations
 	
-    // Pay attention to transformation order !!
+	// Pay attention to transformation order !!
+	
+	mvMatrix = mult( mvMatrix, rotationZZMatrix( globalAngleZZ ) );
+	mvMatrix = mult( mvMatrix, rotationYYMatrix( globalAngleYY ) );
+	mvMatrix = mult( mvMatrix, rotationXXMatrix( globalAngleXX ) );
+
     
 	mvMatrix = mult( mvMatrix, translationMatrix( model.tx, model.ty, model.tz ) );
+
+	
+	
 						 
 	mvMatrix = mult( mvMatrix, rotationZZMatrix( model.rotAngleZZ ) );
 	
@@ -584,49 +594,18 @@ function animate() {
 		
 		var elapsed = timeNow - lastTime;
 		
-		// Global rotation
-		
-		globalRotationYY_ON = true;
-		if( globalRotationYY_ON ) {
-
-			globalAngleYY += globalRotationYY_DIR * globalRotationYY_SPEED * (90 * elapsed) / 1000.0;
-		}
-		
-		var vecDir = vec3();
-
-		// For every model --- Local rotations
-	
-		// for(var i = 0; i < sceneModels.length; i++ )
-	    // {
-		// 	if( sceneModels[i].rotXXOn ) {
-
-		// 		sceneModels[i].rotAngleXX += sceneModels[i].rotXXDir * sceneModels[i].rotXXSpeed * (90 * elapsed) / 1000.0;
-		// 	}
-
-		// 	if( sceneModels[i].rotYYOn ) {
-
-		// 		sceneModels[i].rotAngleYY += sceneModels[i].rotYYDir * sceneModels[i].rotYYSpeed * (90 * elapsed) / 1000.0;
-		// 	}
-
-		// 	if( sceneModels[i].rotZZOn ) {
-
-		// 		sceneModels[i].rotAngleZZ += sceneModels[i].rotZZDir * sceneModels[i].rotZZSpeed * (90 * elapsed) / 1000.0;
-		// 	}
-		// }
-		
 		// Rotating the light sources
 	
-		for(var i = 0; i < lightSources.length; i++ )
-	    {
-			if( lightSources[i].isRotYYOn() ) {
+		// for(var i = 0; i < lightSources.length; i++ )
+	    // {
+		// 	if( lightSources[i].isRotYYOn() ) {
 
-				var angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
+		// 		var angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
 		
-				lightSources[i].setRotAngleYY( angle );
-			}
-		}
-}
-	
+		// 		lightSources[i].setRotAngleYY( angle );
+		// 	}
+		// }
+	}
 	lastTime = timeNow;
 }
 
@@ -638,108 +617,11 @@ function animate() {
 function tick() {
 	
 	requestAnimFrame(tick);
-	
-	moveCar();
+	moveCar(current_road);
 	drawScene();
-	
 	animate();
 }
 
-function moveCar()
-{
-	console.log(car_middle_point);
-	if(direction == "Left")
-	{
-		for(var vertice = 0; vertice < sceneModels[1].vertices.length; vertice+=3)
-		{
-			sceneModels[1].vertices[vertice] -= 0.1 * car_speed;
-		}
-		car_middle_point[0] -= 0.1 * car_speed;
-		if(car_middle_point[0] <= -4.5)
-		 {
-			direction = "Back";
-		}  
-	}
-	else if(direction == "Right")
-	{
-		for(var vertice = 0; vertice < sceneModels[1].vertices.length; vertice+=3)
-		{
-			sceneModels[1].vertices[vertice] += 0.1 * car_speed; 
-			FlipCar(direction);
-		}
-		car_middle_point[0] += 0.1 * car_speed;
-		if(car_middle_point[0] >= 4.5) 
-		{
-			direction = "Front";
-			FlipCar(direction);
-		} 
-	}
-	else if(direction == "Front")
-	{
-		for(var vertice = 0; vertice < sceneModels[1].vertices.length; vertice+=3)
-		{
-			sceneModels[1].vertices[vertice+2] -= 0.1 * car_speed;
-		}
-		car_middle_point[2] -= 0.1 * car_speed;
-		if(car_middle_point[2] <= -4.5)
-		{
-			direction = "Left";
-			FlipCar(direction);
-		} 
-	}
-	else
-	{
-		for(var vertice = 0; vertice < sceneModels[1].vertices.length; vertice+=3)
-		{
-			sceneModels[1].vertices[vertice+2] += 0.1 * car_speed; 
-		}
-		car_middle_point[2] += 0.1 * car_speed;
-		if(car_middle_point[2] >= 4.5)
-		{
-			direction = "Right";
-			FlipCar(direction);
-		} 
-	}	
-}
-
-function FlipCar(direction)
-{
-	// sceneModels[1].rotXXDir = 0.5;
-	// sceneModels[1].rotAngleXX = 45;
-	// sceneModels[1].rotAngleZZ = 45;
-	// for(var vertice = 0; vertice < sceneModels[1].vertices.length; vertice+=9)
-	// {
-	// 	// Switch X with Z
-	// 	var tempx_1 = sceneModels[1].vertices[vertice];
-	// 	var tempz_1 = sceneModels[1].vertices[vertice + 2];
-	// 	var tempx_2 = sceneModels[1].vertices[vertice + 3];
-	// 	var tempz_2 = sceneModels[1].vertices[vertice + 5];
-	// 	var tempx_3 = sceneModels[1].vertices[vertice + 6];
-	// 	var tempz_3 = sceneModels[1].vertices[vertice + 8];
-		
-	// 	sceneModels[1].vertices[vertice] = tempz_1;
-	// 	sceneModels[1].vertices[vertice + 2] = tempx_1;
-	// 	sceneModels[1].vertices[vertice + 3] = tempz_2;
-	// 	sceneModels[1].vertices[vertice + 5] = tempx_2;
-	// 	sceneModels[1].vertices[vertice + 6] = tempz_3;
-	// 	sceneModels[1].vertices[vertice + 8] = tempx_3;
-
-	// 	// Switch 2nd with 3rd point
-	// 	var p_tempx_2 = sceneModels[1].vertices[vertice + 3];
-	// 	var p_tempy_2 = sceneModels[1].vertices[vertice + 4];
-	// 	var p_tempz_2 = sceneModels[1].vertices[vertice + 5];
-	// 	var p_tempx_3 = sceneModels[1].vertices[vertice + 6];
-	// 	var p_tempy_3 = sceneModels[1].vertices[vertice + 7];
-	// 	var p_tempz_3 = sceneModels[1].vertices[vertice + 8];
-
-	// 	sceneModels[1].vertices[vertice + 3] = p_tempx_3;
-	// 	sceneModels[1].vertices[vertice + 4] = p_tempy_3;
-	// 	sceneModels[1].vertices[vertice + 5] = p_tempz_3;
-	// 	sceneModels[1].vertices[vertice + 6] = p_tempx_2;
-	// 	sceneModels[1].vertices[vertice + 7] = p_tempy_2;
-	// 	sceneModels[1].vertices[vertice + 8] = p_tempz_2;
-	// }
-}
 //----------------------------------------------------------------------------
 //
 //  User Interaction
@@ -827,14 +709,31 @@ function setEventListeners(){
 				
 		switch(mode){
 			
-			case 0 : sceneModels[2] = new track_1Model();
+			case 0 :
+			{	
+				current_road.reset_road();
+				sceneModels[2] = new track_1Model();
+				current_road = roads[0];
+				reset_car();
 				break;
+			} 
+			case 1 : 
+			{
+				current_road.reset_road();
+				sceneModels[2] = new track_2Model();
+				current_road = roads[1];
+				reset_car();
+				break;
+			}
 			
-			case 1 : sceneModels[2] = new track_2Model();
+			case 2 :
+			{
+				current_road.reset_road();
+				sceneModels[2] = new track_3Model();
+				current_road = roads[2];
+				reset_car();
 				break;
-			
-			case 2 : sceneModels[2] = new track_3Model();
-				break;
+			}
 		}
 	});     
 
@@ -1018,9 +917,9 @@ function init_models()
 {
 	sceneModels.push( new worldModel() );
 	sceneModels.push( new carModel() );
-	sceneModels[1].tx = 0.0;
-	sceneModels[1].ty = 0.0;
-	sceneModels[1].tz = 0.0;
+	sceneModels[1].tx = car_starting_pos[0];
+	sceneModels[1].ty = car_starting_pos[1];
+	sceneModels[1].tz = car_starting_pos[2];
 	sceneModels.push( new track_1Model() );
 }
 
@@ -1045,13 +944,13 @@ function initWebGL( canvas ) {
 		
 		// Enable FACE CULLING
 		
-		gl.enable( gl.CULL_FACE );
+		// gl.enable( gl.CULL_FACE );
 		
 		// DEFAULT: The BACK FACE is culled!!
 		
 		// The next instruction is not needed...
 		
-		gl.cullFace( gl.BACK );
+		// gl.cullFace( gl.BACK );
 		
 		// Enable DEPTH-TEST
 		
@@ -1069,17 +968,12 @@ function initWebGL( canvas ) {
 function runWebGL() {
 	
 	init_models();
-
+	initializeRoads();
 	var canvas = document.getElementById("my-canvas");
-	
 	initWebGL( canvas );
-
 	shaderProgram = initShaders( gl );
-	
 	setEventListeners();
-	
 	tick();		// A timer controls the rendering / animation    
-
 	outputInfos();
 }
 
