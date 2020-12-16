@@ -1,12 +1,11 @@
-// cone model
+// treetop_pir model
 
-function coneModel( ) {
+function treetop_pirModel( ) {
+	var treetop_pir = new emptyModelFeatures();
     
-	var cone = new emptyModelFeatures();
-    
-    cone.name = "CONE";
+    treetop_pir.name = "Treetop_Pir";
 
-    cone.vertices = [
+    treetop_pir.vertices = [
         // Front face
         0.0,  0.8,  0.0,
         -0.8, -0.8,  0.8,
@@ -26,9 +25,9 @@ function coneModel( ) {
 
     ];
 
-    console.log("cone");
+    console.log("treetop_pir");
 
-    cone.colors = [
+    treetop_pir.colors = [
         0.2, 0.4, 0.1, 
         0.2, 0.4, 0.1,  
         0.2, 0.4, 0.1,  
@@ -46,9 +45,27 @@ function coneModel( ) {
         0.2, 0.4, 0.1, 
     ];
 
-    console.log(cone.colors);
+    treetop_pir.start_colors = [
+        0.2, 0.4, 0.1, 
+        0.2, 0.4, 0.1,  
+        0.2, 0.4, 0.1,  
 
-	computeVertexNormals( cone.vertices, cone.normals );
+        0.2, 0.4, 0.1, 
+        0.2, 0.4, 0.1, 
+        0.2, 0.4, 0.1, 
 
-	return cone;
+        0.2, 0.4, 0.1, 
+        0.2, 0.4, 0.1,  
+        0.2, 0.4, 0.1, 
+
+        0.2, 0.4, 0.1, 
+        0.2, 0.4, 0.1, 
+        0.2, 0.4, 0.1, 
+    ];
+
+    console.log(treetop_pir.colors);
+
+	computeVertexNormals( treetop_pir.vertices, treetop_pir.normals );
+
+	return treetop_pir;
 }

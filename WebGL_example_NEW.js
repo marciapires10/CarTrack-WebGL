@@ -17,6 +17,7 @@
 //
 
 var light = 0;
+
 var car_starting_pos = [0.45, 0.0, 0.45];
 
 var current_road;
@@ -334,7 +335,7 @@ function computeIllumination( mvMatrix, model ) {
 				
 				continue;
 			}
-			// continue;	// Comentar mais tarde
+			continue;	// Comentar mais tarde
 	        // INITIALIZE EACH COMPONENT, with the constant terms
 	
 		    var ambientTerm = vec3();
@@ -696,6 +697,52 @@ function outputInfos(){
 
 function setEventListeners(){
 
+	var show_world = document.getElementById("show_world");
+	var show_car = document.getElementById("show_car");
+	var def_speed = 1;
+	
+	show_car.addEventListener("click", function(){
+		show_car.checked = true;
+		console.log(show_car.checked);
+	});
+
+
+	var reset_race = document.getElementById("reset_race");
+	reset_race.addEventListener("click", function(){
+		reset_car();
+		document.getElementById("speed_value").innerHTML = def_speed;
+	});
+
+	var start_car = document.getElementById("start_car");
+	start_car.addEventListener("click", function(){
+		start_race();
+		document.getElementById("speed_value").innerHTML = def_speed;
+	});
+
+	var pause_car = document.getElementById("pause_car");
+	pause_car.addEventListener("click", function(){
+		pause_race();
+	});
+
+	var cont_car = document.getElementById("cont_car");
+	cont_car.addEventListener("click", function(){
+		cont_race();
+	});
+
+	document.getElementById("speed_value").innerHTML = def_speed;
+	var speed_value = document.getElementById("speed_value");
+	var speed_dec = document.getElementById("decrease_speed");
+	var speed_inc = document.getElementById("increase_speed");
+
+	speed_dec.addEventListener("click", function(){
+		speed_value.innerHTML = decrease_car_speed();
+	});
+
+	speed_inc.addEventListener("click", function(){
+		speed_value.innerHTML = increase_car_speed();
+	});
+
+
 	document.addEventListener("keydown", function(event){
 		var key = event.keyCode;
 		switch(key){
@@ -979,15 +1026,43 @@ function init_models()
 	sceneModels[1].ty = car_starting_pos[1];
 	sceneModels[1].tz = car_starting_pos[2];
 	sceneModels.push( new track_1Model() );
+	// Piramid tree
 	sceneModels.push( new cylinderModel());
 	sceneModels[3].tx = 0.2;
 	sceneModels[3].ty = 0.1;
-	sceneModels[3].tz = 0.0;
-
-	sceneModels.push( new coneModel());
+	sceneModels[3].tz = -0.2;
+	sceneModels.push( new treetop_pirModel());
 	sceneModels[4].tx = 0.2;
-	sceneModels[4].ty += 0.3;
-	sceneModels[4].tz = 0;
+	sceneModels[4].ty = 0.22;
+	sceneModels[4].tz = -0.2;
+
+	// Quad tree
+	sceneModels.push( new cylinderModel());
+	sceneModels[5].tx = -0.3;
+	sceneModels[5].ty = 0.05;
+	sceneModels[5].tz = 0.3;
+	sceneModels[5].sx = 0.05;
+	sceneModels[5].sy = 0.05;
+	sceneModels[5].sz = 0.05;
+	sceneModels.push( new treetop_quadModel() );
+	sceneModels[6].tx = -0.3;
+	sceneModels[6].ty = 0.075;
+	sceneModels[6].tz = 0.3;
+	sceneModels[6].sx = 0.05;
+	sceneModels[6].sy = 0.05;
+	sceneModels[6].sz = 0.05;
+
+	// Mini Quad Tree
+	sceneModels.push( new cylinderModel());
+	sceneModels[7].tx = -0.55;
+	sceneModels[7].ty = 0.07;
+	sceneModels[7].tz = -0.55;
+	sceneModels.push( new treetop_quadModel() );
+	sceneModels[8].tx = -0.55;
+	sceneModels[8].ty = 0.10;
+	sceneModels[8].tz = -0.55;
+
+	sceneModels.push( new flagmarkModel() );
 }
 
 function initWebGL( canvas ) {
