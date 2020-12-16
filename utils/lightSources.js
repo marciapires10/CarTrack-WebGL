@@ -2,7 +2,7 @@
 //
 //  A class for instantiating light sources.
 //
-//  J. Madeira - Oct. 2015 + November 2017
+// Adapted from J. Madeira - Oct. 2015 + November 2017
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -224,7 +224,7 @@ var lightSources = [];
 
 lightSources.push( new LightSource() );
 
-lightSources[0].setPosition( 6.0, 1.0, 6.0, 1.0 );
+lightSources[0].setPosition( 6.0, 2.0, 6.0, 1.0 );
 
 lightSources[0].setIntensity( 0.8, 0.0, 0.0 );
 

@@ -2,7 +2,7 @@
 //
 //  For instantiating the scene models.
 //
-//  J. Madeira - November 2018
+//  Adapted From J. Madeira - November 2018
 //
 //////////////////////////////////////////////////////////////////////////////
 

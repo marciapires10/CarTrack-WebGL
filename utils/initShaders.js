@@ -4,7 +4,7 @@
 //
 //	Getting, compiling and linking the vertex and the fragment shaders
 //
-//  J. Madeira - October 2015
+//  Adapted From J. Madeira - October 2015
 //
 //////////////////////////////////////////////////////////////////////////////
 

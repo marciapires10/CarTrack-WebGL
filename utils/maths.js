@@ -4,7 +4,7 @@
 //
 //  Ref. Original code from the Angel / Shreiner examples
 //	
-//	Additional functions by J. Madeira - Sep./Oct. 2015
+//	Adapted from Additional functions by J. Madeira - Sep./Oct. 2015
 //
 //////////////////////////////////////////////////////////////////////////////
 

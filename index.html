@@ -1,56 +1,211 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>Car racing track</title>
-        <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
-        <script id="shader-vs" type="x-shader/x-vertex">
+<head>
 	
-            attribute vec3 aVertexPosition;
-            attribute vec3 aVertexColor;
+<!--
 
-            uniform mat4 uMVMatrix;
-            uniform mat4 uPMatrix;
 
-            varying vec4 vertexColor;
+Adapted from Joaquim Madeira
 
-            void main(void){
-                gl_PointSize = 5.0;
+-->
+	
+<title>WebGL NEW example &mdash; Several Light Sources - GPU - Per Vertex Shading</title>
 
-                gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" href="style.css">
 
-                vertexColor = vec4(aVertexColor, 1.0);
-            }
-            
-        </script>
+<script id="shader-vs" type="x-shader/x-vertex">
+	
+    attribute vec3 aVertexPosition;
+
+    attribute vec3 aVertexColor;
+    
+    uniform mat4 uMVMatrix;
+
+    uniform mat4 uPMatrix;
+
+    varying vec4 vertexColor;
+    
+    void main(void) {
+		
+		// To allow seeing the points drawn
+		
+		gl_PointSize = 5.0;
+		
+		// Just converting the (x,y,z) vertices to Homogeneous Coord.
+		
+		// And multiplying by the Projection and the Model-View matrix
+		
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
         
-        <script id="shader-fs" type="x-shader/x-fragment">
+        // Converting the RGB color value to RGBA
         
-            precision mediump float;
+        vertexColor = vec4(aVertexColor, 1.0);
+    }
+</script>
 
-            varying vec4 vertexColor;
+<script id="shader-fs" type="x-shader/x-fragment">
 
-            void main() {
-                gl_FragColor = vertexColor;
-            }
-        
-        </script>
+	precision mediump float;
+	
+	varying vec4 vertexColor;
+	
+	void main(void) {
+		
+		// Using the passed vertex color
+		
+		gl_FragColor = vertexColor;
+	}
+</script>
 
-        <!--JS files-->
-        <script type="text/javascript" src="utils/initShaders.js"></script>
-        <script type="text/javascript" src="utils/maths.js"></script>
-        <script type="text/javascript" src="utils/webgl-utils.js"></script>
-        <script type="text/javascript" src="main.js"></script>
-        <script type="text/javascript" src="drawModels.js"></script>
-    </head>
+<!-- The JS files -->
 
-    <body onload="runWebGL();">
-        <div style="text-align: left;">
-            <p>Car racing track</p>
-            <canvas id="my-canvas" style="border:1px solid #000000;" width="1080" height="1080"></canvas>
-        </div>
+<!-- Some useful functions for browser compatibility -->
 
-    </body>
+<script type="text/javascript" src="utils/webgl-utils.js"></script>
+
+<!-- Handling vectors and matrices -->
+
+<script type="text/javascript" src="utils/maths.js"></script>
+
+<!-- Processing triangle mesh models -->
+
+<script type="text/javascript" src="models/models.js"></script>
+
+<!-- Creating the light sources -->
+
+<script type="text/javascript" src="utils/lightSources.js"></script>
+
+<!-- Creating the scene models -->
+
+<script type="text/javascript" src="models/sceneModels.js"></script>
+<!-- Load model types -->
+<script type="text/javascript" src="models/car.js"></script>
+<script type="text/javascript" src="models/world.js"></script>
+<script type="text/javascript" src="models/track_1.js"></script>
+<script type="text/javascript" src="models/track_2.js"></script>
+<script type="text/javascript" src="models/track_3.js"></script>
+<script type="text/javascript" src="models/track_4.js"></script>
+<script type="text/javascript" src="models/cylinder.js"></script>
+<script type="text/javascript" src="models/treetop_pir.js"></script>
+<script type="text/javascript" src="models/treetop_quad.js"></script>
+<script type="text/javascript" src="models/flagmark.js"></script>
+
+<!-- Load model types -->
+<script type="text/javascript" src="Road.js"></script>
+<script type="text/javascript" src="carMovement.js"></script>
+<!-- WebGL code -->
+
+<script type="text/javascript" src="utils/initShaders.js"></script>
+
+<script type="text/javascript" src="main.js"></script>
+
+</head>
+
+<body onload="runWebGL();" style="background-color: #EEE7DE;">
+
+	<div style="width: 100%; overflow: hidden;">
+		
+		<p style="font-size: 45px; text-align: center;"><b>Welcome to our racetrack</b></p>
+		
+		<div style="width:1080px; float: left;"; >
+			<p style="font-size: 24px;">Press <b>D</b> for <b>day mode</b> or <b>N</b> for <b>night mode</b>. <label id="fps" style="float: right; margin-right: 90px;"> fps: </label></p> 
+			<canvas id="my-canvas" style="border:1px solid #000000;" width="1000" height="750"></canvas>
+		</div>
+		
+		<div style="margin-left: 700px; padding-top: 30px; padding-left: 100px;">
+			<p style="font-size: 24px;"><input type="radio" id="show_world" name="show" checked><b> Show world</b> <input type="radio" id="show_car" name="show"><b> Show car</b></p>			
+			
+			<div id="div_car">
+				
+				<p style="font-size: 24px;">Change your <b>car color</b>: 
+					<button class="button" id="blue" style="background-color: blue;"><b>Blue</b></button>
+					<button class="button" id="green"  style="background-color: green;"><b>Green</b></button>
+					<button class="button" id="yellow"  style="background-color: yellow;"><b>Yellow</b></button>
+					<button class="button" id="red"  style="background-color: red;"><b>Red</b></button>
+				</p>
+				&nbsp;&nbsp;&nbsp;
+				<p style="font-size: 24px;">Press <b>arrow left</b> or <b>arrow right</b> to <b>XX rotate</b>.</p>
+				<p style="font-size: 24px;">Press <b>Q</b> or <b>A</b> to <b>YY rotate</b>.</p>
+				<p style="font-size: 24px;">Press <b>arrow up</b> or <b>arrow down</b> to <b>ZZ rotate</b>.</p>
+			</div>
+
+			<div id="div_world">
+				<p style="font-size: 24px;"><b>1)</b> Choose your favorite <b>track</b>:    
+				
+					<select id="tracks" style="font-size: 18px;">
+						<option value="0">Track 1</option>
+						<option value="1">Track 2</option>
+						<option value="2">Track 3</option>
+						<option value="3">Track 4</option>
+					</select>
+				</p>
+
+				<p style="font-size: 24px;"><b>2)</b> How many <b>laps? </b>    
+					<input type="number" min="1" id="n_lap">
+					<button id="send_lap">OK</button>
+					<label style="font-size: 16px;">(If you click OK, the race will immediatly start)</label>
+				</p>
+				<p style="font-size: 24px;">or leave it blank and let it run indefinitely!</p>
+				
+				<p style="font-size: 24px;"><b>Current lap: </b>    
+					<label id="lap_value"></label>
+				</p>
+
+				<p>
+					<button class="button" id="start_car"><b>Start race</b></button>
+					&nbsp;&nbsp;&nbsp;
+					<button class="button" id="pause_car"><b>Pause race</b></button>
+					&nbsp;&nbsp;&nbsp;
+					<button class="button" id="cont_car"><b>Continue race</b></button>
+				</p>
+
+				<p style="font-size: 24px;"><b>3)</b> Adjust your <b>velocity</b>:    
+				
+					<button id="decrease_speed"> - </button>
+					<label id="speed_value" style="display: inline-block; width: 60px; text-align: center;"></label>
+					<button id="increase_speed"> + </button>
+				</p>
+				
+				<p style="font-size: 24px;">Choose the <b>projection type</b>:
+				
+				<select id="projection-selection" style="font-size: 18px;">
+					<option value="0">Orthogonal Projection</option>
+					<option value="1">Perspective Projection</option>
+				</select>
+				
+				</p>
+				
+				<p style="font-size: 24px;">Choose the <b>rendering mode</b>:
+				
+				<select id="rendering-mode-selection" style="font-size: 18px;">
+					<option value="0">Filled Triangles</option>
+					<option value="1">Wireframe</option>
+					<option value="2">Vertices</option>
+				</select>
+				</p>
+
+				<p style="font-size: 24px;">Press <b>arrow left</b> or <b>arrow right</b> to <b>XX rotate</b>.</p>
+				<p style="font-size: 24px;">Press <b>Q</b> or <b>A</b> to <b>YY rotate</b>.</p>
+				<p style="font-size: 24px;">Press <b>arrow up</b> or <b>arrow down</b> to <b>ZZ rotate</b>.</p>
+				
+				<p>
+					<button class="button" id="reset_race"><b>Reset race</b></button>
+					&nbsp;&nbsp;&nbsp;
+					<button class="button" id="reset_all"><b>Reset all</b></button>
+				</p>
+				<p style="margin-left: 280px;">  
+					<button class="button" id="turnOnLights" ><b>Turn On Lights</b></button>
+					&nbsp;&nbsp;&nbsp;
+					<button class="button" id="turnOffLights"><b>Turn Off Lights</b></button>
+			</p>
+			</div>
+		</div>
+        				
+	</div>
+
+</body>
 
 </html>
