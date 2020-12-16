@@ -212,8 +212,6 @@ LightSource.prototype.setRotationSpeed = function( s ) {
 	this.rotationSpeed = s;
 }
 
-// COMPLETE THE MISSING METHODS !!
-
 
 //----------------------------------------------------------------------------
 //

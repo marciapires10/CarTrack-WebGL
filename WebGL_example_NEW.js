@@ -264,6 +264,7 @@ function reset_light_sources()
 //  Drawing the 3D scene
 function computeIllumination( mvMatrix, model ) {
 	
+	// return;// Comentar mais tarde
 	// Phong Illumination Model
 
     // SMOOTH-SHADING 
@@ -319,14 +320,11 @@ function computeIllumination( mvMatrix, model ) {
 	    // Compute the 3 components: AMBIENT, DIFFUSE and SPECULAR
 	    
 	    // FOR EACH LIGHT SOURCE
-	    
 	    for(var l = 0; l < lightSources.length; l++ )
 	    {
 			if( lightSources[l].isOff() ) {
-				
 				continue;
 			}
-			continue;	// Comentar mais tarde
 	        // INITIALIZE EACH COMPONENT, with the constant terms
 	
 		    var ambientTerm = vec3();
@@ -479,6 +477,7 @@ function computeIllumination( mvMatrix, model ) {
 			if( model.colors[vertIndex + 2] > 1.0 ) {
 				model.colors[vertIndex + 2] = 1.0;
 			}
+			console.log(tempR + "," + tempG + "," + tempB);
 			// lightSources[l].switchOff();
 		}
 			
@@ -513,17 +512,9 @@ function drawScene() {
 		
 		pos_Viewer[2] = 1.0;  
 		
-		// TO BE DONE !
-		
-		// Allow the user to control the size of the view volume
 	}
 	else {	
 
-		// A standard view volume.
-		
-		// Viewer is at (0,0,0)
-		
-		// Ensure that the model is "inside" the view volume
 		
 		pMatrix = perspective( 45, 1.5, 0.05, 15 );
 		
@@ -531,15 +522,11 @@ function drawScene() {
 		
 		globalTz = -2.5;
 
-		// NEW --- The viewer is on (0,0,0)
 		
 		pos_Viewer[0] = pos_Viewer[1] = pos_Viewer[2] = 0.0;
 		
 		pos_Viewer[3] = 1.0;  
 		
-		// TO BE DONE !
-		
-		// Allow the user to control the size of the view volume
 	}
 	
 	// Passing the Projection Matrix to apply the current projection
@@ -548,7 +535,6 @@ function drawScene() {
 	
 	gl.uniformMatrix4fv(pUniform, false, new Float32Array(flatten(pMatrix)));
 	
-	// NEW --- Passing the viewer position to the vertex shader
 	
 	
 	gl.uniform4fv( gl.getUniformLocation(shaderProgram, "viewerPosition"),
@@ -570,7 +556,6 @@ function drawScene() {
 
 		if( !lightSources[i].isOff() ) {
 				
-			// COMPLETE THE CODE FOR THE OTHER ROTATION AXES
 
 			if( lightSources[i].isRotYYOn() ) 
 			{
@@ -594,7 +579,6 @@ function drawScene() {
 			}
 		}
 		
-	// 	// NEW Passing the Light Souree Matrix to apply
 	
 		var lsmUniform = gl.getUniformLocation(shaderProgram, "allLights["+ String(i) + "].lightSourceMatrix");
 	
@@ -611,7 +595,6 @@ function drawScene() {
 	           primitiveType );
 	}
 	           
-	// NEW - Counting the frames
 	
 	countFrames();
 }
@@ -647,17 +630,6 @@ function animate() {
 		
 		var elapsed = timeNow - lastTime;
 		
-		// Rotating the light sources
-	
-		// for(var i = 0; i < lightSources.length; i++ )
-	    // {
-		// 	if( lightSources[i].isRotYYOn() ) {
-
-		// 		var angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
-		
-		// 		lightSources[i].setRotAngleYY( angle );
-		// 	}
-		// }
 	}
 	lastTime = timeNow;
 }
@@ -711,7 +683,6 @@ function resetAll(){
 }
 
 function setEventListeners(){
-
 	var show_world = document.getElementById("show_world");
 	var show_car = document.getElementById("show_car");
 	var div_world = document.getElementById("div_world");
@@ -745,51 +716,18 @@ function setEventListeners(){
 	var red = document.getElementById("red");
 
 	blue.addEventListener("click", function(){
-		for(var v=0; v < 180; v += 3){
-			if(v >= 108 && v < 126){
-				continue;
-			}
-			car_colors[v] = 0;
-			car_colors[v+1] = 0;
-			car_colors[v+2] = 1;
-		}
-		
-	});
+		change_car_color(0)});
 
 	green.addEventListener("click", function(){
-		for(var v=0; v < 180; v += 3){
-			if(v >= 108 && v < 126){
-				continue;
-			}
-			car_colors[v] = 0;
-			car_colors[v+1] = 1;
-			car_colors[v+2] = 0;
-		}
-		
+		change_car_color(1)
 	});
 
 	yellow.addEventListener("click", function(){
-		for(var v=0; v < 180; v += 3){
-			if(v >= 108 && v < 126){
-				continue;
-			}
-			car_colors[v] = 1;
-			car_colors[v+1] = 1;
-			car_colors[v+2] = 0;
-		}
-		
+		change_car_color(2)
 	});
 
 	red.addEventListener("click", function(){
-		for(var v=0; v < 180; v += 3){
-			if(v >= 108 && v < 126){
-				continue;
-			}
-			car_colors[v] = 0.6;
-			car_colors[v+1] = 0;
-			car_colors[v+2] = 0.1;
-		}
-		
+		change_car_color(3)
 	});
 
 
@@ -842,6 +780,7 @@ function setEventListeners(){
 		else{
 			defineLap(laps.value);
 			start_race();
+			laps.value = "";
 		}
 	});
 
@@ -994,10 +933,7 @@ function setEventListeners(){
 
 function init_models()
 {
-	while(sceneModels.length > 0){
-		sceneModels.pop();
-	}
-
+	sceneModels = [];
 	if(scenes == "WORLD"){
 		
 		sceneModels.push( new worldModel() );
@@ -1010,12 +946,12 @@ function init_models()
 		sceneModels.push( new track_1Model() );
 		// Piramid tree
 		sceneModels.push( new cylinderModel());
-		sceneModels[3].tx = 0.3;
-		sceneModels[3].ty = 0.1;
+		sceneModels[3].tx = 0.35;
+		sceneModels[3].ty = 0.08;
 		sceneModels[3].tz = -0.2;
 		sceneModels.push( new treetop_pirModel());
-		sceneModels[4].tx = 0.3;
-		sceneModels[4].ty = 0.22;
+		sceneModels[4].tx = 0.35;
+		sceneModels[4].ty = 0.20;
 		sceneModels[4].tz = -0.2;
 
 		// Quad tree
@@ -1063,33 +999,10 @@ function init_models()
 function initWebGL( canvas ) {
 	try {
 		
-		// Create the WebGL context
-		
-		// Some browsers still need "experimental-webgl"
-		
 		gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 		
-		// DEFAULT: The viewport occupies the whole canvas 
-		
-		// DEFAULT: The viewport background color is WHITE
-		
-		// NEW - Drawing the triangles defining the model
 		
 		primitiveType = gl.TRIANGLES;
-		
-		// DEFAULT: Face culling is DISABLED
-		
-		// Enable FACE CULLING
-		
-		// gl.enable( gl.CULL_FACE );
-		
-		// DEFAULT: The BACK FACE is culled!!
-		
-		// The next instruction is not needed...
-		
-		// gl.cullFace( gl.BACK );
-		
-		// Enable DEPTH-TEST
 		
 		gl.enable( gl.DEPTH_TEST );
         
@@ -1108,11 +1021,11 @@ function runWebGL() {
 	initializeRoads();
 	var canvas = document.getElementById("my-canvas");
 	initWebGL( canvas );
+	resetTrack();
 	shaderProgram = initShaders( gl );
 	setEventListeners();
 	setDay();
-	tick();		// A timer controls the rendering / animation    
-	outputInfos();
+	tick();
 }
 
 
