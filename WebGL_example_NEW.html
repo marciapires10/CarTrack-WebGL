@@ -19,6 +19,7 @@ J. Madeira - November 2017 + November 2018
 <title>WebGL NEW example &mdash; Several Light Sources - GPU - Per Vertex Shading</title>
 
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<link rel="stylesheet" href="style.css">
 
 <!--
 
@@ -103,6 +104,7 @@ The fragment shader is the same simple one.
 <script type="text/javascript" src="models/track_2.js"></script>
 <script type="text/javascript" src="models/track_3.js"></script>
 <script type="text/javascript" src="models/cylinder.js"></script>
+<script type="text/javascript" src="models/cone.js"></script>
 <script type="text/javascript" src="models/background.js"></script>
 
 <!-- Load model types -->
@@ -118,77 +120,102 @@ The fragment shader is the same simple one.
 
 <body onload="runWebGL();">
 
-	<div style="text-align: center">
+	<div style="width: 100%; overflow: hidden; background-color: #EEE7DE;">
 		
-		<p>Model animation with several light sources - Per Vertex Shading on the GPU</p>
+		<p style="font-size: 50px; text-align: center;"><b>Welcome to our racetrack <i class="fas fa-car"></i></b></p>
 		
-		<canvas id="my-canvas" style="border:1px solid #000000;" width="1080" height="1080"></canvas>
+		<div style="width:1080px; float: left;"; >
+			<p id="fps"> fps: </p>
+			<canvas id="my-canvas" style="border:1px solid #000000;" width="1000" height="750"></canvas>
+		</div>
 		
-		<!-- NEW --- To show the number of frames per second -->
-		
-		<p id="fps"> fps: </p>
-
-		<p>XX rotation: 
+		<div style="margin-left: 700px; padding-top: 30px; padding-left: 100px;">
+			<p style="font-size: 24px;">Show world <input type="checkbox" id="show_wolrd" checked> Show car <input type="checkbox" id="show_car"></p>
 			
-		<button id="XX-on-off-button">On / Off</button>
-
-	    <button id="XX-direction-button">Change Direction</button>
-
-	    <button id="XX-slower-button">Slower</button>
-
-	    <button id="XX-faster-button">Faster</button>
-
-		</p>
-		
-		<p>YY rotation: 
+			<p style="font-size: 24px;">Choose your favorite <b>track</b>:    
 			
-		<button id="YY-on-off-button">On / Off</button>
+				<select id="tracks" style="font-size: 18px;">
+					<option value="0">Track 1</option>
+					<option value="1">Track 2</option>
+					<option value="2">Track 3</option>
+				</select>
+			</p>
 
-	    <button id="YY-direction-button">Change Direction</button>
 
-	    <button id="YY-slower-button">Slower</button>
-
-	    <button id="YY-faster-button">Faster</button>
-
-		</p>
-		
-		<p>ZZ rotation: 
+			<p>
+				<button class="button" id="start_car"><b>Start race</b></button>
+				<button class="button" id="pause_car"><b>Pause race</b></button>
+			</p>
 			
-		<button id="ZZ-on-off-button">On / Off</button>
 
-	    <button id="ZZ-direction-button">Change Direction</button>
 
-	    <button id="ZZ-slower-button">Slower</button>
+			<p style="font-size: 24px;">Adjust your <b>velocity</b>:    
+			
+				<select id="velocity" style="font-size: 18px;">
+					<option value="0">Track 1</option>
+					<option value="1">Track 2</option>
+					<option value="2">Track 3</option>
+				</select>
+			</p>
 
-	    <button id="ZZ-faster-button">Faster</button>
+			<p>XX rotation: 
+				
+			<button id="XX-on-off-button">On / Off</button>
 
-		</p>
-		
-		<p>Choose the <b>projection type</b>:
-		
-        <select id="projection-selection">
-			<option value="0">Orthogonal Projection</option>
-			<option value="1">Perspective Projection</option>
-        </select>
-        
-        </p>
-        
-        <p>Choose the <b>rendering mode</b>:
-		
-        <select id="rendering-mode-selection">
-			<option value="0">Filled Triangles</option>
-			<option value="1">Wireframe</option>
-			<option value="2">Vertices</option>
-		</select>
-		
-		<p>Choose the <b>track</b>:
-		
-			<select id="tracks">
-				<option value="0">Track 1</option>
-				<option value="1">Track 2</option>
-				<option value="2">Track 3</option>
+			<button id="XX-direction-button">Change Direction</button>
+
+			<button id="XX-slower-button">Slower</button>
+
+			<button id="XX-faster-button">Faster</button>
+
+			</p>
+			
+			<p>YY rotation: 
+				
+			<button id="YY-on-off-button">On / Off</button>
+
+			<button id="YY-direction-button">Change Direction</button>
+
+			<button id="YY-slower-button">Slower</button>
+
+			<button id="YY-faster-button">Faster</button>
+
+			</p>
+			
+			<p>ZZ rotation: 
+				
+			<button id="ZZ-on-off-button">On / Off</button>
+
+			<button id="ZZ-direction-button">Change Direction</button>
+
+			<button id="ZZ-slower-button">Slower</button>
+
+			<button id="ZZ-faster-button">Faster</button>
+
+			</p>
+			
+			<p>Choose the <b>projection type</b>:
+			
+			<select id="projection-selection">
+				<option value="0">Orthogonal Projection</option>
+				<option value="1">Perspective Projection</option>
 			</select>
-		</p>
+			
+			</p>
+			
+			<p>Choose the <b>rendering mode</b>:
+			
+			<select id="rendering-mode-selection">
+				<option value="0">Filled Triangles</option>
+				<option value="1">Wireframe</option>
+				<option value="2">Vertices</option>
+			</select>
+			</p>
+
+			<p style="font-size: 20px;">Press <b>arrow left</b> or <b>arrow right</b> to rotate.</p>
+		
+			
+		</div>
         				
 	</div>
 

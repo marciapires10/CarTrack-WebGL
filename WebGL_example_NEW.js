@@ -979,9 +979,15 @@ function init_models()
 	sceneModels[1].ty = car_starting_pos[1];
 	sceneModels[1].tz = car_starting_pos[2];
 	sceneModels.push( new track_1Model() );
-	sceneModels.push( new cylinderModel() );
+	sceneModels.push( new cylinderModel());
+	sceneModels[3].tx = 0.2;
 	sceneModels[3].ty = 0.1;
-	
+	sceneModels[3].tz = 0.0;
+
+	sceneModels.push( new coneModel());
+	sceneModels[4].tx = 0.2;
+	sceneModels[4].ty += 0.3;
+	sceneModels[4].tz = 0;
 }
 
 function initWebGL( canvas ) {

@@ -5,10 +5,6 @@ var n_side = 12;
 var points = [];
 var dcolors = [];
 
-var theta = [30, 30, 30];
-
-var thetaLoc;
-
 var cyl_vertices, cyl_colors;
 
 function buildVertices(){
@@ -17,20 +13,20 @@ function buildVertices(){
     var inc = Math.PI * 2.0 / n_side;
 
     cyl_vertices = new Array(n_side * 2);
-    cyl_colors = new Array(n_side * 2);
+    //cyl_colors = new Array(n_side * 2);
 
-    alt_colors = [[1.0, 0.5, 0.5, 1.0], [0.5, 1.0, 0.5, 1.0], [0.5, 0.5, 1.0, 1.0]];
+    //alt_colors = [[1.0, 0.5, 0.5, 1.0], [0.5, 1.0, 0.5, 1.0], [0.5, 0.5, 1.0, 1.0]];
 
     for( var i_side = 0; i_side < n_side; i_side++){
-        x = 0.2 * Math.cos(angle);
-        z = 0.2 * Math.sin(angle);
+        x = 0.15 * Math.cos(angle);
+        z = 0.15 * Math.sin(angle);
 
 
-        cyl_vertices[i_side] = vec3(x, 0.5, z);
-        cyl_colors[i_side] = alt_colors[i_side%3];
+        cyl_vertices[i_side] = vec3(x, 1.0, z);
+        //cyl_colors[i_side] = alt_colors[i_side%3];
 
-        cyl_vertices[i_side + n_side] = vec3(x, -0.5, z);
-        cyl_colors[i_side + n_side] = alt_colors[i_side%3];
+        cyl_vertices[i_side + n_side] = vec3(x, 0.0, z);
+        //cyl_colors[i_side + n_side] = alt_colors[i_side%3];
 
         angle += inc;
     }
@@ -84,9 +80,12 @@ function cylinderModel( ) {
     cylinder.name = "Cylinder";
 
     cylinder.vertices = newPoints;
+    console.log("cyl");
 
     cylinder.colors = newColors;
-    cylinder.start_colors = newColors;
+
+    console.log(cylinder.colors);
+
 	computeVertexNormals( cylinder.vertices, cylinder.normals );
 
 	return cylinder;
