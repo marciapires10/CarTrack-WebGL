@@ -209,6 +209,7 @@ function track_3Model( ) {
         0.5, 1, 0.6,
         0.5, 1, 0.6,
     ];
+    track_3.start_colors = track_3.colors;
 	computeVertexNormals( track_3.vertices, track_3.normals );
 
 	return track_3;

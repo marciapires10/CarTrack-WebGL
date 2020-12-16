@@ -15,6 +15,8 @@
 //
 // Global Variables
 //
+
+var light = 0;
 var car_starting_pos = [0.45, 0.0, 0.45];
 
 var current_road;
@@ -256,18 +258,28 @@ function drawModel( model,
 
 //----------------------------------------------------------------------------
 
+function reset_light_sources()
+{
+	light = 0;
+	for(var i = 0; i < sceneModels.length; i++)
+	{
+		for(var j = 0; j < sceneModels[i].colors.length; j++)
+		{
+			sceneModels[i].colors[j] = sceneModels[i].start_colors[j];
+		}
+	}
+}
 //  Drawing the 3D scene
 function computeIllumination( mvMatrix, model ) {
 	
 	// Phong Illumination Model
-	
-	
+
     // SMOOTH-SHADING 
 
     // Compute the illumination for every vertex
 
     // Iterate through the vertices
-    
+	
     for( var vertIndex = 0; vertIndex < model.vertices.length; vertIndex += 3 )
     {	
 		// For every vertex
@@ -322,7 +334,7 @@ function computeIllumination( mvMatrix, model ) {
 				
 				continue;
 			}
-			continue;	// Comentar mais tarde
+			// continue;	// Comentar mais tarde
 	        // INITIALIZE EACH COMPONENT, with the constant terms
 	
 		    var ambientTerm = vec3();
@@ -350,6 +362,20 @@ function computeIllumination( mvMatrix, model ) {
 				lightSourceMatrix = mult( 
 						lightSourceMatrix, 
 						rotationYYMatrix( lightSources[l].getRotAngleYY() ) );
+			}
+
+			if( lightSources[l].isRotXXOn() ) 
+		    {
+				lightSourceMatrix = mult( 
+						lightSourceMatrix, 
+						rotationXXMatrix( lightSources[l].getRotAngleXX() ) );
+			}
+
+			if( lightSources[l].isRotZZOn() ) 
+		    {
+				lightSourceMatrix = mult( 
+						lightSourceMatrix, 
+						rotationZZMatrix( lightSources[l].getRotAngleZZ() ) );
 			}
 			
 	        for( var i = 0; i < 3; i++ )
@@ -427,14 +453,21 @@ function computeIllumination( mvMatrix, model ) {
 	        
 	        var tempG = ambientTerm[1] + diffuseTerm[1] * cosNL + specularTerm[1] * Math.pow(cosNH, model.nPhong);
 	        
-	        var tempB = ambientTerm[2] + diffuseTerm[2] * cosNL + specularTerm[2] * Math.pow(cosNH, model.nPhong);
-	        
+			var tempB = ambientTerm[2] + diffuseTerm[2] * cosNL + specularTerm[2] * Math.pow(cosNH, model.nPhong);
+	
+			
+			light += 1;
+			
+			if(light >= 25000)
+			{
+				light = 25000;
+				continue;
+			}
 			model.colors[vertIndex] += tempR;
 	        
 	        // Avoid exceeding 1.0
 	        
 			if( model.colors[vertIndex] > 1.0 ) {
-				
 				model.colors[vertIndex] = 1.0;
 			}
 	        
@@ -452,11 +485,11 @@ function computeIllumination( mvMatrix, model ) {
 	        // Avoid exceeding 1.0
 	        
 			if( model.colors[vertIndex + 2] > 1.0 ) {
-				
 				model.colors[vertIndex + 2] = 1.0;
 			}
-
-	    }	
+			// lightSources[l].switchOff();
+		}
+			
 	}
 }
 
@@ -553,6 +586,20 @@ function drawScene() {
 						lightSourceMatrix, 
 						rotationYYMatrix( lightSources[i].getRotAngleYY() ) );
 			}
+
+			if( lightSources[i].isRotXXOn() ) 
+			{
+				lightSourceMatrix = mult( 
+						lightSourceMatrix, 
+						rotationXXMatrix( lightSources[i].getRotAngleXX() ) );
+			}
+
+			if( lightSources[i].isRotZZOn() ) 
+			{
+				lightSourceMatrix = mult( 
+						lightSourceMatrix, 
+						rotationZZMatrix( lightSources[i].getRotAngleZZ() ) );
+			}
 		}
 		
 	// 	// NEW Passing the Light Souree Matrix to apply
@@ -577,13 +624,27 @@ function drawScene() {
 	countFrames();
 }
 
+function setDay()
+{
+	gl.clearColor(1.0, 1.0, 1.0, 1.0);
+	lightSources[0].setIntensity( 0.8, 0.0, 0.0 );
+	lightSources[0].setAmbIntensity( 0.1, 0.0, 0.0 );
+	reset_light_sources();
+}
+
+function setNight()
+{
+	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	lightSources[0].setIntensity( 0.1, 0.0, 0.1 );
+	lightSources[0].setAmbIntensity( -0.2, 0.0, -0.1 );
+	reset_light_sources();
+}
 //----------------------------------------------------------------------------
 //
 //  NEW --- Animation
 //
 
 // Animation --- Updating transformation parameters
-
 var lastTime = 0;
 
 function animate() {
@@ -637,20 +698,15 @@ function setEventListeners(){
 
 	document.addEventListener("keydown", function(event){
 		var key = event.keyCode;
+		switch(key){
+			case 39 :
+				globalAngleXX += 10;
+			break;
 
-
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			switch(key){
-				case 39 :
-					sceneModels[i].rotAngleXX += 10;
-				break;
-	
-				case 37 :
-					sceneModels[i].rotAngleXX -= 10;
-				break;
-			}	
-		}
+			case 37 :
+				globalAngleXX -= 10;
+			break;
+		}	
 	});
 	
     // Dropdown list
@@ -715,6 +771,7 @@ function setEventListeners(){
 				sceneModels[2] = new track_1Model();
 				current_road = roads[0];
 				reset_car();
+				setDay();
 				break;
 			} 
 			case 1 : 
@@ -723,6 +780,7 @@ function setEventListeners(){
 				sceneModels[2] = new track_2Model();
 				current_road = roads[1];
 				reset_car();
+				setNight();
 				break;
 			}
 			
@@ -921,6 +979,9 @@ function init_models()
 	sceneModels[1].ty = car_starting_pos[1];
 	sceneModels[1].tz = car_starting_pos[2];
 	sceneModels.push( new track_1Model() );
+	sceneModels.push( new cylinderModel() );
+	sceneModels[3].ty = 0.1;
+	
 }
 
 function initWebGL( canvas ) {
@@ -973,6 +1034,7 @@ function runWebGL() {
 	initWebGL( canvas );
 	shaderProgram = initShaders( gl );
 	setEventListeners();
+	setDay();
 	tick();		// A timer controls the rendering / animation    
 	outputInfos();
 }

@@ -140,6 +140,7 @@ function track_2Model( ) {
 
 
     ];
+    track_2.start_colors = track_2.colors;
 	computeVertexNormals( track_2.vertices, track_2.normals );
 
 	return track_2;

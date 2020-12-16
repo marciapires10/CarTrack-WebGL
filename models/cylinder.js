@@ -86,7 +86,7 @@ function cylinderModel( ) {
     cylinder.vertices = newPoints;
 
     cylinder.colors = newColors;
-
+    cylinder.start_colors = newColors;
 	computeVertexNormals( cylinder.vertices, cylinder.normals );
 
 	return cylinder;

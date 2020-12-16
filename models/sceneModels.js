@@ -22,6 +22,8 @@ function emptyModelFeatures() {
 	this.normals = [];
 	
 	this.colors = [];
+
+	this.start_colors = [];
 	// Transformation parameters
 
 	// Displacement vector
@@ -70,11 +72,11 @@ function emptyModelFeatures() {
 	
 	// Material features
 	
-	this.kAmbi = [ 0.2, 0.2, 0.2 ];
+	this.kAmbi = [ 0.05, 0.2, 0.2 ];
 	
-	this.kDiff = [ 0.7, 0.7, 0.7 ];
+	this.kDiff = [ 0.05, 0.2, 0.2 ];
 
-	this.kSpec = [ 0.7, 0.7, 0.7 ];
+	this.kSpec = [ 0.05, 0.1, 0.1 ];
 
 	this.nPhong = 100;
 }

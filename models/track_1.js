@@ -73,6 +73,7 @@ function track_1Model( ) {
         0.5, 1, 0.6,
         0.5, 1, 0.6,
     ];
+    track_1.start_colors = track_1.colors;
 	computeVertexNormals( track_1.vertices, track_1.normals );
 
 	return track_1;
