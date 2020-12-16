@@ -130,7 +130,7 @@ The fragment shader is the same simple one.
 		</div>
 		
 		<div style="margin-left: 700px; padding-top: 30px; padding-left: 100px;">
-			<p style="font-size: 24px;">Show world <input type="checkbox" id="show_wolrd" checked> Show car <input type="checkbox" id="show_car"></p>
+			<p style="font-size: 24px;">Show world <input type="radio" id="show_world" name="show" checked> Show car <input type="radio" id="show_car" name="show"></p>
 			
 			<p style="font-size: 24px;">Choose your favorite <b>track</b>:    
 			
@@ -145,17 +145,16 @@ The fragment shader is the same simple one.
 			<p>
 				<button class="button" id="start_car"><b>Start race</b></button>
 				<button class="button" id="pause_car"><b>Pause race</b></button>
+				<button class="button" id="cont_car"><b>Continue race</b></button>
 			</p>
 			
 
 
 			<p style="font-size: 24px;">Adjust your <b>velocity</b>:    
 			
-				<select id="velocity" style="font-size: 18px;">
-					<option value="0">Track 1</option>
-					<option value="1">Track 2</option>
-					<option value="2">Track 3</option>
-				</select>
+				<button id="decrease_speed"> - </button>
+				<label id="speed_value"></label>
+				<button id="increase_speed"> + </button>
 			</p>
 
 			<p>XX rotation: 
@@ -213,6 +212,11 @@ The fragment shader is the same simple one.
 			</p>
 
 			<p style="font-size: 20px;">Press <b>arrow left</b> or <b>arrow right</b> to rotate.</p>
+
+			<p>
+				<button class="button" id="reset_race"><b>Reset race</b></button>
+				<button class="button" id="reset_all"><b>Reset all</b></button>
+			</p>
 		
 			
 		</div>
