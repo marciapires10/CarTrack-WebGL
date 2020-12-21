@@ -405,6 +405,7 @@ function start_race()
 	sceneModels[1].rotAngleYY = 0;
 	current_road.reset_road(true);
 	car_speed = 1.0;
+	updateSpeed();
 }
 
 function pause_race(){

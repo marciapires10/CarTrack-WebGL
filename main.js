@@ -10,7 +10,7 @@
 //
 
 var scenes = "WORLD";
-var has_lights = true;
+var has_lights = false;
 var light = 0;
 var continue_light = true;
 var car_starting_pos = [0.45, 0.0, 0.45];
