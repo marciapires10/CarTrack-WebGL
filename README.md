@@ -1,2 +1,2 @@
-# CV_Project
-Project for CV course.
+# Cartrack WebGL
+Project for Visual Computing course.
